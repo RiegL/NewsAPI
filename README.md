@@ -10,5 +10,5 @@ pnpm dev
 bun dev
 ```
 
-Open(http://localhost:3000](https://github.com/RiegL/News) - Esta api é do projeto News rodar junto com o front
+Link - (projeto News](https://github.com/RiegL/News) - Esta api é do projeto News rodar junto com o front
 
