@@ -1,10 +1,12 @@
 const express = require("express");//importa o express
 const bcrypt = require("bcrypt");//importa o bcrypt
 const jwt = require("jsonwebtoken");//importa o jwt
+const cors = require("cors");//importa o cors
 const usuarioModel = require("./src/module/usuario/usuario.model");
 const noticiaModel = require("./src/module/noticia/noticia.model");
 const app = express();//exporta o express para o app.js
 app.use(express.json());//exporta o express.json para o app.js
+app.use(cors());//exporta o cors para o app.js
 
 app.post("/login", async (req, res) => {
   if (!req.body.email) {
@@ -71,19 +73,35 @@ app.post("/usuarios", async (req, res) => {
 });
 
 app.get("/noticias", async (req, res) => {
+  let filtroCategoria = {};
+  if (req.query.categoria) {
+    filtroCategoria = { categoria: req.query.categoria };
+  }
   //busca todas as noticias no banco de dados
-  const noticias = await noticiaModel.find({}); //busca todas as noticias
+  const noticias = await noticiaModel.find(filtroCategoria); //busca todas as noticias
   return res.status(200).json([noticias]); //retorna as noticias
 });
 
 app.post("/noticias", async (req, res) => {
-  //cria uma nova noticia
+  if(!req.body.titulo){
+    return res.status(400).json({ message: "O campo titulo é obrigatório" });
+  }
+  if(!req.body.img){
+    return res.status(400).json({ message: "O campo imagem é obrigatório" });
+  }
+  if(!req.body.texto){
+    return res.status(400).json({ message: "O campo texto é obrigatório" });
+  }
+  if(!req.body.categoria){
+    return res.status(400).json({ message: "O campo categoria é obrigatório" });
+  }
+ 
   const noticia = await noticiaModel.create({
-    //cria uma noticia no banco de dados
-    title: req.body.title, //cria o titulo da noticia
-    img: req.body.img, //cria a imagem da noticia
-    texto: req.body.texto, //cria o texto da noticia
-  });
+    titulo: req.body.titulo,
+    img: req.body.img,
+    texto: req.body.texto,
+    categoria: req.body.categoria,
+  })
   return res.status(201).json([noticia]);
 });
 
